@@ -1,58 +1,54 @@
 version: '3'
-
 services:
-   traefik:
-      image: "traefik:v2.5"
-      container_name: "traefik"
-      restart: always
-      networks:
-        - web
-      command:
-        - "--log.level=DEBUG"
-        - "--api.insecure=true"
-        - "--api.dashboard=true"
-        - "--providers.docker=true"
-        - "--providers.docker.exposedbydefault=false"
-        - "--entrypoints.web.address=:80"
-        - "--entrypoints.websecure.address=:443"
-        - "--entrypoints.node.address=:10001"
-        - "--certificatesresolvers.myhttpchallenge.acme.httpchallenge=true"
-        - "--certificatesresolvers.myhttpchallenge.acme.httpchallenge.entrypoint=web"
-        - "--certificatesresolvers.myhttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-        - "--certificatesresolvers.myhttpchallenge.acme.email=sergeizahargood@gmail.com"
-        - "--certificatesresolvers.myhttpchallenge.acme.storage=/letsencrypt/acme.json"
-      ports:
-        - "80:80"
-        - "443:443"
-        - "8080:8080"
-        - "4000:4000"
-      volumes:
-        - "./letsencrypt:/letsencrypt"
-        - "/var/run/docker.sock:/var/run/docker.sock:ro"
-
-
-
-  angular-frontend:
-      container_name: angssl
-      restart: always
-      networks:
-        - web
-      build:
-        context: .
-        dockerfile: Dockerfile
-      ports:
-        - '80:80'
-      #      - '4202:80'
-      environment:
-        - NODE_ENV=production
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.ecom.middlewares=myredirect"
-        - "traefik.http.routers.ecom.rule=Host(`ssl.sergeizakharovfrontend.site`,'www.ssl.sergeizakharovfrontend.site')"
-        - "traefik.http.routers.ecom.entrypoints=web"
-        - "traefik.http.routers.ecom-secure.rule=Host(`ssl.sergeizakharovfrontend.site`,'www.ssl.sergeizakharovfrontend.site')"
-        - "traefik.http.routers.ecom-secure.entrypoints=websecure"
-        - "traefik.http.routers.ecom-secure.tls.certresolver=myhttpchallenge"
-        - "traefik.http.routers.ecom-secure.tls=true"
+ traefik:
+  image: "traefik:v2.5"
+  container_name: traefik
+  restart: always
+#  networks:
+#   - web
+  command:
+    - "--log.level=DEBUG"
+    - "--api.insecure=true"
+    - "--api.dashboard=true"
+    - "--providers.docker=true"
+    - "--providers.docker.exposedbydefault=false"
+    - "--entrypoints.web.address=:80"
+    - "--entrypoints.websecure.address=:443"
+    - "--entrypoints.node.address=:10001"
+    - "--certificatesresolvers.myhttpchallenge.acme.httpchallenge=true"
+    - "--certificatesresolvers.myhttpchallenge.acme.httpchallenge.entrypoint=web"
+    - "--certificatesresolvers.myhttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+    - "--certificatesresolvers.myhttpchallenge.acme.email=sergeizahargood@gmail.com"
+    - "--certificatesresolvers.myhttpchallenge.acme.storage=/letsencrypt/acme.json"
+  ports:
+    - "80:80"
+    - "443:443"
+    - "8080:8080"
+    - "4000:4000"
+  volumes:
+    - "./letsencrypt:/letsencrypt"
+    - "/var/run/docker.sock:/var/run/docker.sock:ro"
+ angular-frontend:
+  container_name: angssl
+  restart: always
+#  networks:
+#   - web
+  build:
+    context: .
+    dockerfile: Dockerfile
+  ports:
+    - '80:80'
+  #      - '4202:80'
+  environment:
+    - NODE_ENV=production
+  labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.ecom.middlewares=myredirect"
+    - "traefik.http.routers.ecom.rule=Host(`ssl.sergeizakharovfrontend.site`,'www.ssl.sergeizakharovfrontend.site')"
+    - "traefik.http.routers.ecom.entrypoints=web"
+    - "traefik.http.routers.ecom-secure.rule=Host(`ssl.sergeizakharovfrontend.site`,'www.ssl.sergeizakharovfrontend.site')"
+    - "traefik.http.routers.ecom-secure.entrypoints=websecure"
+    - "traefik.http.routers.ecom-secure.tls.certresolver=myhttpchallenge"
+    - "traefik.http.routers.ecom-secure.tls=true"
 
 
